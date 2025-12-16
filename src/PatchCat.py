@@ -12,8 +12,8 @@ logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 # ---------- Hyper-parameters ----------
 OLLAMA_MODEL = "ollama/llama3.2"
 OLLAMA_API_BASE = "http://localhost:11434"
-MODEL_PATH = os.path.join("..", "gin-llm", "clustering", "running-model", "model.pkl")
-VECTORIZER_PATH = os.path.join("..", "gin-llm", "clustering", "running-model", "vectorizer.pkl")
+MODEL_PATH = os.path.join("running-model", "model.pkl")
+VECTORIZER_PATH = os.path.join("running-model", "vectorizer.pkl")
 MAX_SUMMARY_WORDS = 15
 # --------------------------------------
 
