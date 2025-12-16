@@ -53,4 +53,8 @@ python3 PatchCat.py <diff-of-two-files>
 
 ## Automation of Model Training
 
-TODO.
+Due to licensing issues, we cannot legally publish the training of the model as we received no permission from the original author of one of the libraries used to do so. 
+
+Nonetheless, please contact us if you wish to retrain the PatchCat model. We can, at least, supply some of the script and a reference to the library you need to copy (forwhich we did not have permission to share).
+
+We are working on a full refactoring of PatchCat to replace this library with our own code.
