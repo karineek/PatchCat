@@ -13,8 +13,8 @@ ubuntu@fuzzing-05:~/gin/git-backup/gin-llm/clustering/running-model$ python3 uns
 
 This is the running model used in the PatchCat ASE NIER 2025 paper.
 
-_Even-Mendoza, K., Brownlee, A., Geiger, A., Hanna, C., Petke, J., Sarro, F., & Sobania, D. (2025). LLM-Guided Genetic Improvement: Envisioning Semantic Aware Automated Software Evolution. In New Ideas and Emerging Results Track, 40th IEEE/ACM International Conference on Automated Software Engineering, ASE 2025: ASE 2025 NIER
-_
+*Even-Mendoza, K., Brownlee, A., Geiger, A., Hanna, C., Petke, J., Sarro, F., & Sobania, D. (2025). LLM-Guided Genetic Improvement: Envisioning Semantic Aware Automated Software Evolution. In New Ideas and Emerging Results Track, 40th IEEE/ACM International Conference on Automated Software Engineering, ASE 2025: ASE 2025 NIER*
+
 
 BibTex Entry:
 ```
