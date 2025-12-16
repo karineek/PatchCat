@@ -1,6 +1,6 @@
 # PatchCat
 
-
+PatchCat, given a difference between two versions of a Java file (a code edit), returns the category of the edit to be used in the GI loop, e.g. in gintool.
 
 ## Requirements
 
