@@ -28,7 +28,7 @@ ollama pull llama3.2
 ## Use Ready Model
 To run the trained model reported in ASE NIER 2025, use this:
 ```
-cd ../running-model
+cd src/running-model
 python3 unseen-retrives-batch.py <Text-Short-Description-of-Patch>
 ```
 
@@ -42,12 +42,13 @@ python3 unseen-retrives-batch.py "Tokenizing a line and populating a command wit
 ## Create a Summary via Local LLMs
 To run a summary of a diff between two Java source files, with local LLMS, use this:
 ```
-cd ../llm
+cd src/llm
 python3 local_llm_patchDiff.py <diff-of-two-files>
 ```
 
 ## Full Automation from git diff to cluster
 ```
+cd src
 python3 PatchCat.py <diff-of-two-files>
 ```
 
