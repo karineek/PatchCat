@@ -48,6 +48,7 @@ python3 local_llm_patchDiff.py <diff-of-two-files>
 
 ## Full Automation from git diff to cluster
 ```
+cd src
 python3 PatchCat.py <diff-of-two-files>
 ```
 
