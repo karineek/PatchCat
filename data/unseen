@@ -1,0 +1,137 @@
+Changed collection class from custom (RuleCollector) to API (List)
+Changed from specific generic type to using type inference <>, and on another line changed direct access to an attribute to a getter call. Seem to have added comments explaining the change is for Java 8+
+added comments (start/end of implementation)
+skipped - no patch
+added comment (and an incorrect one at that)
+Changed from specific generic type to using type inference <>, and on another line changed direct access to an attribute to a getter call. added comments stating the obvious same change as 609
+Changed from specific generic type to using type inference <>, and on another line changed direct access to an attribute to a getter call. Seem to have added comments explaining the change is for Java 8+ same change as 609
+Added a declaration to an existing variable assignment
+Added meaningless comments (line 1,2,3)
+Replaced comments with new ones stating the obvious; added an unreachable throw of an exception (comes after a return statement)
+skipped - no patch
+no diff
+no diff
+no diff
+no diff
+no diff
+no diff
+no diff
+no diff
+no diff
+Adds a redeclaration of a comparator, previously declared at class level
+Nothing functional: Moves a return statement from just after a try catch to inside the catch
+Changed a method call on an member object to the same instance call in the class (method.getAnnotations to getAnnotations) - latter is then infinitely recursive so fails
+no diff
+changes an argument to a lambda expression (new expression looks to be invalid)
+deletes almost whole method body, leaving only return of a now-non-existent variable
+adds a method call to a newly created object (return new AnnotatedBuilder(this); to return new AnnotatedBuilder(this).build(); )
+changes reference to a local variable testClass to a class level one: junit.Framework.class
+no diff
+no diff
+adds a method call to a variable being returned: constructors[0] gets .newInstance(new Object[] {}) appended
+pointless comment added ("implementation 1:")
+no diff
+added extra (unreachable) return statement
+added redundant syncronized block within another, and changed a method call
+added extra (unreachable) return statement
+replaced a return statement with a for loop from elsewhere (with no return)
+deleted required return statement
+replaced a return statement with an if... block from elsewhere; the return statements in it are of wrong type
+deleted entire method body
+added extra return statement, making existing one unreachable
+added new if block
+no diff
+added a call to fail(message) which presumably makes remaining code unreachable
+adds an assignment of a new value to a final member variable
+replaced a method call with a large block of code (16 lines)
+no diff
+identical
+no functional difference (introduces a different structure/ specific variable declaration)
+nothing changed
+- no diff
+no functional difference (deleted comment, getClass() is explicitly called with this, and change of exception)
+no functional difference (specific variable declaration)
+no functional difference (introduces a loop instead of seperate calls)
+adds a try except and tests if object is null
+uses getter method and reduces redundancy, adds comment that this requires Java 8 and above
+no functional difference (change of variable name)
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+deleted comment, add try and catch
+add try and catch
+deleted comment
+changes return value to null
+changes return value to a comment
+change of functionality in a bad way, overwrites input with "this is a test", overwrites input group, ignores specific pattern function
+changes return value to this
+changes how the class is called (each or TestClass)
+no functional difference (just different structure and specific variable declaration)
+change of function call
+change of variable (no longer a new instance of a class)
+added comments, change an object of a class to a variable
+deleted comment
+- no diff
+- no diff
+Replaces the wrapper for ErrorReportingRunner and calls directly the run() method.
+Just added useless comments
+Replaced the RuleCollector with an ArrayList followed by a complex embeded function structure (much more code than before). Anyway, did not compile.
+- no diff
+Just added useless comments begin of the code, end of the code
+Removes the warning() wrapper and tries to return a string instead (wrong return type).
+Just added useless comment java implementation 1
+Uses a more modern Java style (for Generics) and replaces a direct call of a class variable with a getter. Adds also a comment that it is assuming the getter exists
+- no diff
+- no diff
+- no diff
+- no diff
+- no diff
+Adds some foreach logic for Arrays.
+- no diff
+- no diff
+- no diff
+- no diff
+Implements a new HashMap logic and ignores all validation from the original code. Also returns the HashMap in a void method.
+Adds the call newInstance() on a constructors element from a list.
+Relaces class names in the existing code.
+Returns only the string "Hello" and replaces the return of the original runner object.
+No change
+No change
+Just added a comment
+- no diff
+Tries to split the code into multiple lines. Prints the result instead of returning (as defined in the method).
+Commented out multiple lines (3 out of 4)
+Created a temporary object to access List<Method> before checking if empty seems legit edit, but might fail on type checks
+Added a comment
+Change type from RuleCollector to List of the return value and the code before it Probably failed data type checks
+Edit the use of runner to call run method and a comment explaining it Probably failed data type checks
+Edit a comment
+Added a comment and replace apply with accept, while pushing pack apply to the line before using ::apply Looks like an odd choice to move up apply with "::"
+Replaced two ArrayList var declaration with comments
+ternary operator to if
+Added try and catch statements Seems that it forget to add relevant imports to the exceptions data types
+Remove TestRule data type from declaration statement, add comment, replace call to member results with getter getResult()
+Introduces an inline comparator for sorting instead of the default
+Introduces a lambda function b adding () -> before the original statement
+surround throw statement with try and catch block
+Replace return this by a tempoaray of the same data type which is assigned the value of this
+No change
+No change
+Remove checks on errors
+Change the name of variable to start with capital letter
+Replace throw statement with comments
+Change orderig methods to work with Map
+Replace Map for loop with int[] and fix assignements like values[0] = 1;
+Replace the variable name in one location; probably failed because var name is undeclared
+Replace calling method with . with ::
+No change
+replace return of var with return null
+Change the name of variable to start with capital letter
