@@ -1,5 +1,6 @@
 # COLD: (K-MEANS only) python3 patchCat_clustering.py cold --input gin_untagged --output test_012026_clustered_output.tsv --model all-MiniLM-L6-v2 --truelabels  gin_tagged
 # Cold unseen prediction: (K-MEANS only) python3 patchCat_clustering.py unseencold --input data/unseen --model all-MiniLM-L6-v2 --coldmodel kmeans.pkl  
+# Unseen prediction: (Full model)  python3 patchCat_clustering.py unseen --input data/unseen-v2 --vec vectorizer.pkl --model model.pkl
 
 # This Python program contains two separate ML algorithms: 
 # KMeans (as in Python libraries) and semantic clustering from the paper
