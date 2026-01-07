@@ -1,5 +1,5 @@
-# COLD: (K-MEANS only) python3 patchCat_clustering.py cold --input gin_untagged --output test_012026_clustered_output.tsv --model all-MiniLM-L6-v2 --truelabels  gin_tagged
-# Cold unseen prediction: (K-MEANS only) python3 patchCat_clustering.py unseencold --input data/unseen --model all-MiniLM-L6-v2 --coldmodel kmeans.pkl  
+# COLD: (K-MEANS only) python3 patchCat_clustering.py cold --input gin_untagged --output test_012026_clustered_output.tsv --model all-MiniLM-L12-v2 --truelabels  gin_tagged
+# Cold unseen prediction: (K-MEANS only) python3 patchCat_clustering.py unseencold --input data/unseen --model all-MiniLM-L12-v2 --coldmodel kmeans.pkl  
 # Unseen prediction: (Full model)  python3 patchCat_clustering.py unseen --input data/unseen-v2 --vec vectorizer.pkl --model model.pkl
 
 # This Python program contains two separate ML algorithms: 
@@ -54,7 +54,7 @@ def main():
     cold.add_argument("--truelabels", default="gin_tagged")
     cold.add_argument("--output", default="clustered_output.tsv")
     cold.add_argument("--embeddings", default="embeddings.npy")
-    cold.add_argument("--model", default="all-MiniLM-L6-v2")
+    cold.add_argument("--model", default="all-MiniLM-L12-v2")
     cold.add_argument("--outmodel", default="kmeans.pkl")
 
     # ---- hot / mapping (placeholders for now) ----
@@ -70,7 +70,7 @@ def main():
     # ---- unseen cold only ----
     unseen_cold = subparsers.add_parser("unseencold", help="Prediction of unseen data with K-Means model")
     unseen_cold.add_argument("--input", default="gindata/unseen-v2")
-    unseen_cold.add_argument("--model", default="all-MiniLM-L6-v2")
+    unseen_cold.add_argument("--model", default="all-MiniLM-L12-v2")
     unseen_cold.add_argument("--coldmodel", default="kmeans.pkl")
 
     # Parse
@@ -108,7 +108,8 @@ def main():
         run_unseen_pipeline_cold(
             input_file=args.input,
             model_name=args.model,
-            model_path=args.coldmodel 
+            model_path=args.coldmodel,
+            n_clusters=18
         )
 
     else:
@@ -124,13 +125,13 @@ def run_kmeans_pipeline(
         output_file="clustered_output.tsv",
         output_model="model.pkl",
         embeddings_file="embeddings.npy",
-        model_name="all-MiniLM-L6-v2",
+        model_name="all-MiniLM-L12-v2",
         anchors=anchor_sentences,
         n_clusters=18
     ):
     # Load sentences from file (1 per line)
     with open(input_file, "r", encoding="utf8") as f:
-        sentences = [line.strip() for line in f.readlines() if line.strip()]
+        sentences = [line.lower().strip() for line in f.readlines() if line.strip()]
     model = SentenceTransformer(model_name)
 
     print("[K-means] >>> Generating embeddings...")
@@ -148,7 +149,8 @@ def run_kmeans_pipeline(
     labels = kmeans.fit_predict(embeddings)
   
     # Shift cluster labels to 1..N
-    labels_shifted = [label + 1 for label in labels]
+    labels_shifted = [(label + 1) % n_clusters for label in labels] 
+                #= [label + 1 for label in labels]
     # Create DataFrame with shifted cluster labels
     df = pd.DataFrame({"Text": sentences, "Cluster": labels_shifted})
     # Display clusters
@@ -220,15 +222,16 @@ def run_unseen_pipeline(
 # Query the mode post-training (cold)
 def run_unseen_pipeline_cold(
     input_file="unseen",
-    model_name="all-MiniLM-L6-v2",
-    model_path="kmeans.pkl"
+    model_name="all-MiniLM-L12-v2",
+    model_path="kmeans.pkl",
+    n_clusters=18
 ):
     # Load the model
     kmeans = joblib.load(model_path)  
     
     # Load sentences from file (1 per line)
     with open(input_file, "r", encoding="utf8") as f:
-        sentences = [line.strip() for line in f.readlines() if line.strip()]
+        sentences = [line.lower().strip() for line in f.readlines() if line.strip()]
     model = SentenceTransformer(model_name)
 
     print("[K-means] >>> Generating embeddings...")
@@ -236,7 +239,9 @@ def run_unseen_pipeline_cold(
     labels = kmeans.predict(embeddings)
 
     # Output
-    for text, label in zip(sentences, labels):
+    labels_shifted = [(label + 1) % n_clusters for label in labels] 
+                #= [label + 1 for label in labels]
+    for text, label in zip(sentences, labels_shifted):
         print(f"[{label}] {text}")
 
     return 0 # Ends OK
@@ -260,7 +265,7 @@ def evaluate_clustering(true_file, pred_labels):
     true_labels = []
     with open(true_file, "r", encoding="utf8") as f:
         for raw_line in f:
-            line = raw_line.strip()
+            line = raw_line.lower().strip()
             #print (line)
             if len(line) > 0:
                 label, text = line.split("\t", 1)
