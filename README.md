@@ -60,7 +60,120 @@ Due to licensing issues, we cannot legally publish the training of the model as 
 
 Nonetheless, please contact us if you wish to retrain the PatchCat model. We can, at least, supply some of the script and a reference to the library you need to copy (forwhich we did not have permission to share).
 
-We are working on a full refactoring of PatchCat to replace this library with our own code.
+We are working on a full refactoring of PatchCat to replace this library with our own code. Below are instructions for the already-immigrated parts.
+
+### PatchCat – Training and Prediction Statistics Script
+
+This README documents **only the functionality that is currently implemented and usable** in `training_PatchCat.py`.
+
+The script supports **three operational modes**:
+
+1. `cold` – Cold-start clustering using SentenceTransformer embeddings + anchor-initialised K-Means
+2. `unseen` – Prediction on unseen data using a pre-trained *vectorizer + classifier*
+3. `unseencold` – Prediction on unseen data using a trained *K-Means* model
+
+All other options (`hot`, `mapping`) are placeholders and should be ignored for now as we are still immigrating the code to this repository.
+
+---
+
+### Overview
+
+The script clusters or classifies short text items (one per line), typically representing code-change descriptions or patches.
+
+### Command-Line Usage
+
+#### 1. Cold Start Clustering (`cold`)
+
+**Purpose**
+- Embed all input texts using SentenceTransformer
+- Cluster them into 18 anchor-guided clusters using K-Means
+- Save:
+  - cluster assignments
+  - embeddings
+  - trained K-Means model
+- Evaluate against ground-truth labels (if provided)
+
+**Command**
+```bash
+python3 training_PatchCat.py cold --input gin_untagged --truelabels gin_tagged --output clustered_output.tsv \
+                                  --embeddings embeddings.npy --model all-MiniLM-L12-v2 --outmodel kmeans.pkl
+```
+
+**Outputs**
+- `clustered_output.tsv` :
+  ```
+  <cluster_id>\t<text>
+  ```
+- `embeddings.npy`: NumPy array of sentence embeddings
+- `kmeans.pkl`    : Serialised sklearn K-Means model
+
+The script also prints a short preview (first (head) items) of each cluster to stdout.
+
+##### Evaluation Metrics
+
+If `--truelabels` is provided, the script reports:
+
+1. **Clustering Accuracy**
+   - Uses Hungarian matching over the confusion matrix
+   - Accounts for label permutation
+
+2. **Normalized Mutual Information (NMI)**
+   - Measures agreement between true labels and clusters
+
+Printed as:
+```
+[Eval] >>> Accuracy: X.XXXX
+[Eval] >>> NMI:      X.XXXX
+```
+---
+
+#### 2. Unseen Prediction – Full Model (`unseen`)
+
+**Purpose**
+- Apply a previously trained classical ML model
+- Uses:
+  - `vectorizer.pkl`
+  - `model.pkl`
+
+**Command**
+```bash
+python3 training_PatchCat.py unseen --input gindata/unseen-v2 --vec vectorizer.pkl --model model.pkl
+```
+
+**Output** (stdout only)
+```
+[cluster_id] text
+```
+
+Example:
+```
+[12] renamed variable foo to bar
+[3] removed dead code
+```
+
+No files are written in this mode.
+
+---
+
+### 3. Unseen Prediction – Cold Model (`unseencold`)
+
+**Purpose**
+- Predict clusters for unseen data using the saved K-Means model
+- Recomputes embeddings using the same SentenceTransformer
+
+**Command**
+```bash
+python3 training_PatchCat.py unseencold --input data/unseen --model all-MiniLM-L12-v2 --coldmodel kmeans.pkl
+```
+
+**Output** (stdout only)
+```
+[cluster_id] text
+```
+
+No files are written in this mode.
+---
+
 
 ## Publications
 
