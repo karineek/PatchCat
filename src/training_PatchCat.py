@@ -119,6 +119,7 @@ def main():
 #
 #
 # Writing the first step, including K-means with anchors
+# Weakly guided clustering via semantic centroid initialization
 def run_kmeans_pipeline(
         input_file="gin_untagged",
         true_labels="gin_tagged",
