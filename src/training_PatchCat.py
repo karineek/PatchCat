@@ -138,7 +138,9 @@ def run_kmeans_pipeline(
     print("[K-means] >>> Generating embeddings...")
     embeddings = model.encode(sentences, show_progress_bar=True)
     anchor_embeddings = model.encode(anchor_sentences)
-
+    embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+    anchor_embeddings = anchor_embeddings / np.linalg.norm(anchor_embeddings, axis=1, keepdims=True)
+  
     # Apply K-Means clustering
     print(f"[K-means] >>> Clustering into {n_clusters} categories (anchor-initialized)...")
     kmeans = KMeans(
@@ -237,11 +239,11 @@ def run_unseen_pipeline_cold(
 
     print("[K-means] >>> Generating embeddings...")
     embeddings = model.encode(sentences, show_progress_bar=True)
+    embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
     labels = kmeans.predict(embeddings)
 
     # Output
     labels_shifted = [(label + 1) % n_clusters for label in labels] 
-                #= [label + 1 for label in labels]
     for text, label in zip(sentences, labels_shifted):
         print(f"[{label}] {text}")
 
