@@ -20,8 +20,8 @@ from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 from scipy.optimize import linear_sum_assignment
 
-from patchCat_clustering_alts import run_kmeans_pipeline_tfidf
-from copkmeans.cop_kmeans import cop_kmeans, cop_predict_using_original_code # Need to be installed, see comments above!
+from training_study.patchCat_clustering_alts import run_kmeans_pipeline_tfidf
+from training_study.copkmeans.cop_kmeans import cop_kmeans, cop_predict_using_original_code # Need to be installed, see comments above!
 
 
 # Define anchor sentences for each cluster (must be exactly 18)
