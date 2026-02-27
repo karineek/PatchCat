@@ -19,7 +19,7 @@ from copkmeans.cop_kmeans import cop_kmeans, cop_predict_using_original_code # N
 #        from ChatGPT (OpenAI).
 # We gave the original K-means with embeddings to
 # openAI, and it produced this code to test with
-# TD-IDF.
+# TF-IDF.
 
 
 # You already have these in your file:
