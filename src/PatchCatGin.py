@@ -4,7 +4,9 @@ import os
 from functools import cache
 from joblib import load
 from litellm import completion
+import difflib
 import argparse
+from pathlib import Path
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -41,11 +43,12 @@ def process_diff(diff_input: str, *, model: str, api_base: str, max_words: int, 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="process_diff_and_classify.py",
-        description="Summarise a diff and classify the summary.",
+        prog="PatchCatGin.py",
+        description="Given original and patched code, generate a diff and classify the summary.",
     )
 
     # Required input (no positional, no stdin)
+
     parser.add_argument(
         "--diff-text",
         required=True,
@@ -76,7 +79,12 @@ def main() -> int:
         parser.error(f"Failed to load model from {args.model_path!r}: {e}")
 
     # Take the diff text and send to process diff check
-    diff_arg = diff_text = args.diff_text
+    diff_text = args.diff_text
+
+    if "LLM GAVE NO SUGGESTION" in diff_text or "NOT YET APPLIED" in diff_text:
+        print("[1] LLM gave no suggestion")
+        return 0
+    
     result = process_diff(
         diff_text,
         model=args.ollama_model,
