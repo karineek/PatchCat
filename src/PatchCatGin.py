@@ -13,6 +13,9 @@ warnings.filterwarnings("ignore")
 import logging
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
+## Uncomment if you want to run with Ollama API
+#os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key, replace with your
+
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
     prompt = f"Summarize in about {max_words} words:\n\n{record}"
@@ -48,12 +51,27 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     # Required input (no positional, no stdin)
-
     parser.add_argument(
         "--diff-text",
-        required=True,
         help="The diff content as a string.",
     )
+
+    # These two if diff-text was not entered
+    parser.add_argument(
+        "--A-text",
+        help="Content of the first string.",
+    )
+    parser.add_argument(
+        "--B-text",
+        help="Content of the second string.",
+    )
+
+    if args.diff_text is not None:
+        if args.A_text is not None or args.B_text is not None:
+            parser.error("--diff-text cannot be used with --A-text/--B-text")
+    else:
+        if args.A_text is None or args.B_text is None:
+            parser.error("Provide either --diff-text or both --A-text and --B-text")
 
     parser.add_argument("--ollama-model", default="ollama/llama3.2")
     parser.add_argument("--ollama-api-base", default="http://localhost:11434")
