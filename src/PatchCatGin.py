@@ -75,6 +75,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("--ollama-model", default="ollama/llama3.2")
     parser.add_argument("--ollama-api-base", default="http://localhost:11434")
+    # When using ollama API: either uncomment this or send these strings as paraments.
+    # parser.add_argument("--ollama-model", default="ollama/gpt-oss:20b-cloud")
+    # parser.add_argument("--ollama-api-base", default="https://ollama.com")
     parser.add_argument("--model-path", default=os.path.join("running-model", "model.pkl"))
     parser.add_argument("--vectorizer-path", default=os.path.join("running-model", "vectorizer.pkl"))
     parser.add_argument("--max-summary-words", type=int, default=15)
