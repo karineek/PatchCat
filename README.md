@@ -54,6 +54,24 @@ cd src
 python3 PatchCat.py <diff-of-two-files>
 ```
 
+and to fully control each parameter of the deployment:
+```
+ubuntu@fuzzing-05:~/gin/papar-2026/PatchCat/src$ python3 PatchCatGin.py \
+>   --diff-text "diff --git a/foo.py b/foo.py
+> --- a/foo.py
+> +++ b/foo.py
+> @@ -1 +1 @@
+> -print('hi')
+> +print('hello')" \
+>   --ollama-model "ollama/llama3.2" \
+>   --ollama-api-base "http://localhost:11434" \
+>   --model-path "running-model/model.pkl" \
+>   --vectorizer-path "running-model/vectorizer.pkl" \
+>   --max-summary-words 15
+[6] Modified foo.py to print 'hello' instead of 'hi'.
+ubuntu@fuzzing-05:~/gin/papar-2026/PatchCat/src$
+```
+
 ## Automation of Model Training
 
 Due to licensing issues, we cannot legally publish the training of the model as we received no permission from the original author of one of the libraries used to do so. 
