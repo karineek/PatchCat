@@ -7,6 +7,7 @@ from litellm import completion
 import difflib
 import argparse
 from pathlib import Path
+import difflib
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -16,8 +17,9 @@ logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 ## Uncomment if you want to run with Ollama API
 #os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key, replace with your
 
-def make_diff(a: str, b: str) -> str:
-    return None # TODO
+# a is fromlines, and b is tolines
+def make_diff(fromlines: str, tolines: str) -> str:
+    return difflib.ndiff(fromlines, tolines)
     
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
