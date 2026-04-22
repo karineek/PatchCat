@@ -6,7 +6,8 @@ PatchCat, given a difference between two versions of a Java file (a code edit), 
 
 ```
 sudo apt update
-sudo apt install python3.10-venv python3.10-distutils python3-pip
+sudo apt install python3-venv python3-pip
+sudo apt install  python3-distutils # OR pip3 install setuptools for which you will need venv too
 pip3 install -r requirements.txt
 python3 -m nltk.downloader punkt
 python3 -m nltk.downloader punkt_tab
