@@ -31,7 +31,7 @@ def make_diff(a: str, b: str) -> str:
         f2.close()
 
         result = subprocess.run(
-            ["diff", "-u", f1.name, f2.name],
+            ["diff", f1.name, f2.name],
             capture_output=True,
             text=True
         )
