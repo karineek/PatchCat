@@ -7,7 +7,6 @@ from litellm import completion
 import difflib
 import argparse
 from pathlib import Path
-import difflib
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -18,8 +17,29 @@ logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 #os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key, replace with your
 
 # a is fromlines, and b is tolines
-def make_diff(fromlines: str, tolines: str) -> str:
-    return difflib.ndiff(fromlines, tolines)
+import subprocess
+import tempfile
+import os
+
+def make_diff(a: str, b: str) -> str:
+    f1 = tempfile.NamedTemporaryFile("w", delete=False)
+    f2 = tempfile.NamedTemporaryFile("w", delete=False)
+    try:
+        f1.write(a)
+        f2.write(b)
+        f1.close()
+        f2.close()
+
+        result = subprocess.run(
+            ["diff", "-u", f1.name, f2.name],
+            capture_output=True,
+            text=True
+        )
+        return result.stdout
+
+    finally:
+        os.unlink(f1.name)
+        os.unlink(f2.name)
     
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
