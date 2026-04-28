@@ -49,7 +49,7 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
             model=model,
             api_base=api_base,
             messages=[
-                {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text."},
+                {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. You got 45 seconds for this task."},
                 {"role": "user", "content": prompt},
             ],
         )
