@@ -114,6 +114,9 @@ def main() -> int:
     else:
         if args.A_text is None or args.B_text is None:
             parser.error("Provide either --diff-text or both --A-text and --B-text")
+        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
+            print("[1] LLM gave no suggestion")
+            return 0
         diff_text = make_diff(args.A_text, args.B_text)
 
     # Load model + vectorizer after parsing, so paths can be overridden
@@ -127,9 +130,7 @@ def main() -> int:
     except Exception as e:
         parser.error(f"Failed to load model from {args.model_path!r}: {e}")
 
-    if "LLM GAVE NO SUGGESTION" in diff_text or "NOT YET APPLIED" in diff_text:
-        print("[1] LLM gave no suggestion")
-        return 0
+
     
     result = process_diff(
         diff_text,
@@ -140,6 +141,7 @@ def main() -> int:
         clf=clf,
     )
     print(result)
+    print(diff_text)
     return 0
 
 # Main
