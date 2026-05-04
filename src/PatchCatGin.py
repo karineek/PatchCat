@@ -140,8 +140,8 @@ def main() -> int:
         vectorizer=vectorizer,
         clf=clf,
     )
-    print(result)
-    print(diff_text)
+    print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+    print(diff_text, flush=True) # same
     return 0
 
 # Main
