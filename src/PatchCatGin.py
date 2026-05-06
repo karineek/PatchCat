@@ -116,7 +116,7 @@ def main() -> int:
         if args.A_text is None or args.B_text is None:
             parser.error("Provide either --diff-text or both --A-text and --B-text")
         diff_text = make_diff(args.A_text, args.B_text)
-        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in a>
+        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
             print("[1] LLM gave no suggestion", flush=True)
             print(diff_text, flush=True)
             return 0
