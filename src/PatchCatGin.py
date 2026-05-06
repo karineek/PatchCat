@@ -48,6 +48,7 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
         response = completion(
             model=model,
             api_base=api_base,
+            request_timeout=45,  # seconds
             messages=[
                 {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. You got 45 seconds for this task."},
                 {"role": "user", "content": prompt},
@@ -114,10 +115,11 @@ def main() -> int:
     else:
         if args.A_text is None or args.B_text is None:
             parser.error("Provide either --diff-text or both --A-text and --B-text")
-        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
-            print("[1] LLM gave no suggestion")
-            return 0
         diff_text = make_diff(args.A_text, args.B_text)
+        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in a>
+            print("[1] LLM gave no suggestion", flush=True)
+            print(diff_text, flush=True)
+            return 0
 
     # Load model + vectorizer after parsing, so paths can be overridden
     try:
