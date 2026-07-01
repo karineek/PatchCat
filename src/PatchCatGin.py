@@ -40,6 +40,62 @@ def make_diff(a: str, b: str) -> str:
     finally:
         os.unlink(f1.name)
         os.unlink(f2.name)
+
+def direct_diff_classification(record: str, model: str, api_base: str, max_words: int) -> str:
+    """
+        Classify a patch (given as a diff) directly.
+        Returns:
+            0 = safe/meaningful patch, no need to test
+            1 = sensible patch, but compile + test suite recommended
+            2 = rubbish/trivial patch, e.g. comments-only, whitespace-only, dead code, noise
+        If the LLM response cannot be parsed, it defaults to 1.
+        """
+
+    ## The prompt for this specific action:
+    prompt = f"Classify the following code diff into exactly one category 0, 1, or 2:\n\n{record}"
+    
+    ## Exec the prompt:
+    try:
+        response = completion(
+            model=model,
+            api_base=api_base,
+            request_timeout=45,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (f"""Classify the following code diff into exactly one category:
+                        0 = The patch is clearly okay and meaningful. It can be accepted directly without extra checking.
+                        1 = The patch is sensible, but may contain mistakes. It should be compiled and tested.
+                        2 = The patch is rubbish/trivial/noise, such as comments-only changes, whitespace-only changes,
+                            formatting-only changes, dead code, or changes that do not meaningfully affect behavior.
+                        
+                        Important:
+                        - Output ONLY one integer: 0, 1, or 2.
+                        - Do not explain.
+                        - Do not include punctuation.
+                        """
+                        "You are a Git diff classifier. "
+                        "You must classify diffs into exactly one label: 0, 1, or 2. "
+                        "Output only the integer label."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
+        text = response["choices"][0]["message"]["content"].strip()
+    
+        ## Return the results:
+        if text == "0":
+            return "A"
+        elif text == "2":
+            return "C"
+        elif text == "1":
+            return "B"
+        else:
+            return "B"
+            
+    except Exception:
+        return "B" # In case of an error, we are back to square 1, then return B to test the patch.
     
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
