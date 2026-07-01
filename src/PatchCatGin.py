@@ -16,7 +16,7 @@ logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 ## Uncomment if you want to run with Ollama API
 #os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key, replace with your
 
-# a is fromlines, and b is tolines
+# a is from lines, and b is to lines
 import subprocess
 import tempfile
 import os
@@ -41,7 +41,7 @@ def make_diff(a: str, b: str) -> str:
         os.unlink(f1.name)
         os.unlink(f2.name)
 
-def direct_diff_classification(record: str, model: str, api_base: str, max_words: int) -> str:
+def direct_diff_classification(record: str, model: str, api_base: str) -> str:
     """
         Classify a patch (given as a diff) directly.
         Returns:
@@ -156,6 +156,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--model-path", default=os.path.join("running-model", "model.pkl"))
     parser.add_argument("--vectorizer-path", default=os.path.join("running-model", "vectorizer.pkl"))
     parser.add_argument("--max-summary-words", type=int, default=15)
+    parser.add_argument("--options", type=int, default=0) # change it here or from gin
 
     return parser
 
@@ -178,29 +179,35 @@ def main() -> int:
             return 0
 
     # Load model + vectorizer after parsing, so paths can be overridden
-    try:
-        vectorizer = load(args.vectorizer_path)
-    except Exception as e:
-        parser.error(f"Failed to load vectorizer from {args.vectorizer_path!r}: {e}")
-
-    try:
-        clf = load(args.model_path)
-    except Exception as e:
-        parser.error(f"Failed to load model from {args.model_path!r}: {e}")
-
-
+    if args.options == 0: # Direct request from LLMs
+        result = direct_diff_classification(
+            diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base)
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        return 0
+    else: # Original code
+        try:
+            vectorizer = load(args.vectorizer_path)
+        except Exception as e:
+            parser.error(f"Failed to load vectorizer from {args.vectorizer_path!r}: {e}")
     
-    result = process_diff(
-        diff_text,
-        model=args.ollama_model,
-        api_base=args.ollama_api_base,
-        max_words=args.max_summary_words,
-        vectorizer=vectorizer,
-        clf=clf,
-    )
-    print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
-    print(diff_text, flush=True) # same
-    return 0
+        try:
+            clf = load(args.model_path)
+        except Exception as e:
+            parser.error(f"Failed to load model from {args.model_path!r}: {e}")
+        
+        result = process_diff(
+            diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base,
+            max_words=args.max_summary_words,
+            vectorizer=vectorizer,
+            clf=clf,
+        )
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        print(diff_text, flush=True) # same
+        return 0
 
 # Main
 if __name__ == "__main__":
