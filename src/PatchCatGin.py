@@ -21,6 +21,10 @@ import subprocess
 import tempfile
 import os
 
+# for kmeans variants
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
 def make_diff(a: str, b: str) -> str:
     f1 = tempfile.NamedTemporaryFile("w", delete=False)
     f2 = tempfile.NamedTemporaryFile("w", delete=False)
@@ -150,7 +154,7 @@ from training_PatchCat import cop_predict_using_original_code
 def process_diff_kmeans(diff_input: str, *, model: str, api_base: str, max_words: int, 
                         model_name="all-MiniLM-L12-v2", 
                         model_path="kmeans.pkl",
-                        is_COP=1) -> str:
+                        is_cop=1) -> str:
     '''
         We support two of the models: KMEANS and CO-KMEANS
         1)  %% --model all-MiniLM-L12-v2 --ML kmeans \
@@ -182,7 +186,8 @@ def process_diff_kmeans(diff_input: str, *, model: str, api_base: str, max_words
         X = np.asarray(embedding, dtype=float)
         X = X / (np.linalg.norm(X, axis=1, keepdims=True) + eps)
         label = cop_predict_using_original_code(centers, X)
-        
+
+    label = (label + 1) % n_clusters 
     return f"[{label}] {summary}"
                             
 def build_parser() -> argparse.ArgumentParser:
@@ -213,7 +218,7 @@ def build_parser() -> argparse.ArgumentParser:
     # parser.add_argument("--ollama-model", default="ollama/gpt-oss:20b-cloud")
     # parser.add_argument("--ollama-api-base", default="https://ollama.com")
     parser.add_argument("--model-path", default=os.path.join("running-model", "model.pkl"))
-    parser.add_argument("--vectorizer-path", default=os.path.join("running-model", "vectorizer.pkl"))
+    parser.add_argument("--vectorizer-path", default=os.path.join("running-model", "vectorizer.pkl")) # or all-MiniLM-L12-v2 
     parser.add_argument("--max-summary-words", type=int, default=15)
     parser.add_argument("--options", type=int, default=0) # change it here or from gin
 
@@ -276,7 +281,7 @@ def main() -> int:
             max_words=args.max_summary_words, 
             model_name=args.vectorizer_path,
             model_path=args.model_path,
-            is_COP=0)
+            is_cop=0)
 
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
@@ -289,7 +294,7 @@ def main() -> int:
             max_words=args.max_summary_words, 
             model_name=args.vectorizer_path,
             model_path=args.model_path,
-            is_COP=1)
+            is_cop=1)
 
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
