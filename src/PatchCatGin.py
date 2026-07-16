@@ -145,6 +145,46 @@ def process_diff(diff_input: str, *, model: str, api_base: str, max_words: int, 
     label = classify_text(summary, vectorizer=vectorizer, clf=clf)
     return f"[{label}] {summary}"
 
+# K-means and Co-k-means
+from training_PatchCat import cop_predict_using_original_code 
+def process_diff_kmeans(diff_input: str, *, model: str, api_base: str, max_words: int, 
+                        model_name="all-MiniLM-L12-v2", 
+                        model_path="kmeans.pkl",
+                        is_COP=1) -> str:
+    '''
+        We support two of the models: KMEANS and CO-KMEANS
+        1)  %% --model all-MiniLM-L12-v2 --ML kmeans \
+            %% --output kmeans-clustered_output.tsv \
+            %% --outmodel kmeans.pkl --embeddings embeddings-kmeans.npy 
+
+            AND
+
+        2)  %% --model all-MiniLM-L12-v2 --ML copkmeans \
+            %% --output copkmeans-clustered_output.tsv \
+            %% --outmodel copkmeans.pkl --embeddings embeddings-copkmeans.npy 
+    '''
+    summary = summarize_diff(diff_input, model=model, api_base=api_base, max_words=max_words)
+                            
+    model = SentenceTransformer(model_name)
+    embedding = model.encode(
+        [summary.lower().strip()],
+        show_progress_bar=False,
+    )
+
+    clustering_model = joblib.load(model_path)
+    if not is_cop:
+        label = clustering_model.predict(embedding)
+    else:
+        # COP-KMeans model is stored as a dictionary of centroids.
+        centers = np.asarray(clustering_model["centers"], dtype=float)
+        eps = float(clustering_model.get("eps", 1e-12))
+        
+        X = np.asarray(embedding, dtype=float)
+        X = X / (np.linalg.norm(X, axis=1, keepdims=True) + eps)
+        label = cop_predict_using_original_code(centers, X)
+        
+    return f"[{label}] {summary}"
+                            
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="PatchCatGin.py",
@@ -228,6 +268,32 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
 
+    elif args.options == 3: # KMEANs variants
+        result = process_diff_kmeans(
+            diff_input=diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base,
+            max_words=args.max_summary_words, 
+            model_name=args.vectorizer_path,
+            model_path=args.model_path,
+            is_COP=0)
+
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        return 0
+
+    elif args.options == 4: # CO-KMEANS variants
+        result = process_diff_kmeans(
+            diff_input=diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base,
+            max_words=args.max_summary_words, 
+            model_name=args.vectorizer_path,
+            model_path=args.model_path,
+            is_COP=1)
+
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        return 0
+    
     else: # Original code
         try:
             vectorizer = load(args.vectorizer_path)
