@@ -58,7 +58,7 @@ def llm_classifcation(diff_input: str, *, model: str, api_base: str, max_words: 
     return f"{res} {summary}"
 
 
-def direct_diff_classification(record: str, model: str, api_base: str, direct=1) -> str:
+def direct_diff_classification(record: str, model: str, api_base: str, direct=1,adv=0) -> str:
     """
         Classify a patch (given as a diff) directly.
         Returns:
@@ -76,6 +76,9 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
     else: # Positive is patch diff only (direct use of LLMs)
         prompt = f"Classify the following code diff into exactly one category 0, 1, or 2:\n\n{record}"
     text = "No Response"
+
+    if (adv):
+        prompt = prompt + ". Please, when it is sensible, select 0. Do not cheat. Avoid hallucinations."
     
     ## Exec the prompt:
     try:
@@ -90,7 +93,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
                         0 = The patch is clearly okay and meaningful. It can be accepted directly without extra checking.
                         1 = The patch is sensible, but may contain mistakes. It should be compiled and tested.
                         2 = The patch is rubbish/trivial/noise, such as comments-only changes, whitespace-only changes,
-                            formatting-only changes, dead code, or changes that do not meaningfully affect behavior.
+                            formatting-only changes, dead code, or changes that do not meaningfully affect behaviour.
                         
                         Important:
                         - Output ONLY one integer: 0, 1, or 2.
