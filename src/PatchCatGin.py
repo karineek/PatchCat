@@ -41,7 +41,20 @@ def make_diff(a: str, b: str) -> str:
         os.unlink(f1.name)
         os.unlink(f2.name)
 
-def direct_diff_classification(record: str, model: str, api_base: str) -> str:
+def llm_classifcation(diff_input: str, *, model: str, api_base: str, max_words: int, only_sum=0) -> str:
+    """Run the complete pipeline: summarise -> classify."""
+    summary = summarize_diff(diff_input, model=model, api_base=api_base, max_words=max_words)
+
+    if (not only_sum): # We send both the summary and the code diff of the patch
+        res = direct_diff_classification("This pathc is doing " + summary + " and I extract also the actual code diff of the patch" + diff_input,
+                                           model, api_base, -1)
+    else: # only the summary of the diff is sent to the LLM
+        res = direct_diff_classification(summary,
+                                           model, api_base, 0)
+    return f"{res} {summary}"
+
+
+def direct_diff_classification(record: str, model: str, api_base: str, direct=1) -> str:
     """
         Classify a patch (given as a diff) directly.
         Returns:
@@ -49,10 +62,16 @@ def direct_diff_classification(record: str, model: str, api_base: str) -> str:
             1 = sensible patch, but compile + test suite recommended
             2 = rubbish/trivial patch, e.g. comments-only, whitespace-only, dead code, noise
         If the LLM response cannot be parsed, it defaults to 1.
-        """
+    """
 
     ## The prompt for this specific action:
-    prompt = f"Classify the following code diff into exactly one category 0, 1, or 2:\n\n{record}"
+    if (not direct): # When we use the summary, not the code
+        prompt = f"Classify the following summary of code diff into exactly one category 0, 1, or 2:\n\n{record}"
+    elif direct < 0: # Negative is patch diff + summary
+        prompt = f"Classify the following code diff with its explanation into exactly one category 0, 1, or 2:\n\n{record}"
+    else: # Positive is patch diff only (direct use of LLMs)
+        prompt = f"Classify the following code diff into exactly one category 0, 1, or 2:\n\n{record}"
+    text = "No Response"
     
     ## Exec the prompt:
     try:
@@ -186,6 +205,29 @@ def main() -> int:
             api_base=args.ollama_api_base)
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
+
+    elif args.options == 1: # Direct LLM, but LLM gets the summary of the patch
+        result = llm_classifcation(
+            diff_input=diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base,
+            max_words=args.max_summary_words,
+            only_sum=1)
+
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        return 0
+
+    elif args.options == 2: # Direct LLM, but LLM gets the summary of the patch with the patch diff too
+        result = llm_classifcation(
+            diff_input=diff_text,
+            model=args.ollama_model,
+            api_base=args.ollama_api_base,
+            max_words=args.max_summary_words, 
+            only_sum=1)
+
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        return 0
+
     else: # Original code
         try:
             vectorizer = load(args.vectorizer_path)
