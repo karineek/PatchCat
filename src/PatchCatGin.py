@@ -58,7 +58,7 @@ def llm_classifcation(diff_input: str, *, model: str, api_base: str, max_words: 
     return f"{res} {summary}"
 
 
-def direct_diff_classification(record: str, model: str, api_base: str, direct=1,adv=0) -> str:
+def direct_diff_classification(record: str, model: str, api_base: str, direct=1, adv=0) -> str:
     """
         Classify a patch (given as a diff) directly.
         Returns:
@@ -241,7 +241,7 @@ def main() -> int:
             parser.error("Provide either --diff-text or both --A-text and --B-text")
         diff_text = make_diff(args.A_text, args.B_text)
         if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
-            print("[1] LLM gave no suggestion", flush=True)
+            print("[1] LLM gave no suggestion (PatchCAT)", flush=True)
             print(diff_text, flush=True)
             return 0
 
@@ -271,7 +271,7 @@ def main() -> int:
             model=args.ollama_model,
             api_base=args.ollama_api_base,
             max_words=args.max_summary_words, 
-            only_sum=1)
+            only_sum=0)
 
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
