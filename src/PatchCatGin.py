@@ -246,7 +246,8 @@ def main() -> int:
             return 0
 
     # Load model + vectorizer after parsing, so paths can be overridden
-    if args.options == 0: # Direct request from LLMs
+    # Option 0 and anything else not below is the original PatchCat functionality
+    if args.options == 1: # Direct request from LLMs
         result = direct_diff_classification(
             diff_text,
             model=args.ollama_model,
@@ -254,7 +255,7 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
 
-    elif args.options == 1: # Direct LLM, but LLM gets the summary of the patch
+    elif args.options == 2: # Direct LLM, but LLM gets the summary of the patch
         result = llm_classifcation(
             diff_input=diff_text,
             model=args.ollama_model,
@@ -265,7 +266,7 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
 
-    elif args.options == 2: # Direct LLM, but LLM gets the summary of the patch with the patch diff too
+    elif args.options == 3: # Direct LLM, but LLM gets the summary of the patch with the patch diff too
         result = llm_classifcation(
             diff_input=diff_text,
             model=args.ollama_model,
@@ -276,7 +277,7 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
 
-    elif args.options == 3: # KMEANs variants
+    elif args.options == 4: # KMEANs variants
         result = process_diff_kmeans(
             diff_input=diff_text,
             model=args.ollama_model,
@@ -289,7 +290,7 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
 
-    elif args.options == 4: # CO-KMEANS variants
+    elif args.options == 5: # CO-KMEANS variants
         result = process_diff_kmeans(
             diff_input=diff_text,
             model=args.ollama_model,
@@ -302,7 +303,7 @@ def main() -> int:
         print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
         return 0
     
-    else: # Original code
+    else: # Original code, 0 or >5
         try:
             vectorizer = load(args.vectorizer_path)
         except Exception as e:
