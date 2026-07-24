@@ -112,16 +112,23 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1,
     
         ## Return the results:
         if text == "0":
-            return "A"
+            #label = "17" # If using mid version of gin-llm
+            label =  "A"
         elif text == "2":
-            return "C"
+            #label = "2" # If using mid version of gin-llm
+            label =  "C"
         elif text == "1":
-            return "B"
+            #label = "0" # If using mid version of gin-llm
+            label =  "B"
         else:
-            return "B"
+            #label = "0" # If using mid version of gin-llm
+            label =  "B"
             
     except Exception:
-        return "B" # In case of an error, we are back to square 1, then return B to test the patch.
+        #label = "0" # If using mid version of gin-llm
+        label = "B" # In case of an error, we are back to square 1, then return B to test the patch.
+
+    return f"[{label}] {text}"
     
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
