@@ -234,6 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
@@ -246,11 +247,30 @@ def main() -> int:
     else:
         if args.A_text is None or args.B_text is None:
             parser.error("Provide either --diff-text or both --A-text and --B-text")
-        diff_text = make_diff(args.A_text, args.B_text)
-        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
-            print("[1] LLM gave no suggestion (PatchCAT)", flush=True)
+
+        if len(args.A_text) == 0:
+            print(f"[1] LLM gave no suggestion (PatchCAT) A is empty and B:{args.B_text}", flush=True)
             print(diff_text, flush=True)
             return 0
+
+        if len(args.B_text) == 0:
+            print(f"[1] LLM gave no suggestion (PatchCAT) A:{args.A_text} and B is empty", flush=True)
+            print(diff_text, flush=True)
+            return 0
+
+        if "LLM GAVE NO SUGGESTION" in args.A_text or "NOT YET APPLIED" in args.A_text or "LLM GAVE NO SUGGESTION" in args.B_text or "NOT YET APPLIED" in args.B_text:
+            print(f"[1] LLM gave no suggestion (PatchCAT) A:{args.A_text} and B:{args.B_text}", flush=True)
+            print(diff_text, flush=True)
+            return 0
+
+        diff_text = make_diff(args.A_text, args.B_text)
+
+
+    if len(diff_text) == 0:
+        print(f"[1] LLM gave no suggestion (PatchCAT): Diff Text is empty", flush=True)
+        print(diff_text, flush=True)
+        return 0
+
 
     # Load model + vectorizer after parsing, so paths can be overridden
     # Option 0 and anything else not below is the original PatchCat functionality
