@@ -81,6 +81,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1,
         prompt = prompt + ". Please, when it is sensible, select 0. Do not cheat. Avoid hallucinations."
     
     ## Exec the prompt:
+    print(f"=== PatchCat running with: {model} via {api_base}")
     try:
         response = completion(
             model=model,
