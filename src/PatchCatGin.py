@@ -81,7 +81,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1,
         prompt = prompt + ". Please, when it is sensible, select 0. Do not cheat. Avoid hallucinations."
     
     ## Exec the prompt:
-    print(f"=== PatchCat running with: {model} via {api_base}")
+    # print(f"=== PatchCat running with: {model} via {api_base}")
     try:
         response = completion(
             model=model,
@@ -140,7 +140,7 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
             api_base=api_base,
             request_timeout=45,  # seconds
             messages=[
-                {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. You got 45 seconds for this task."},
+                {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. Never discuss comments unless they are the only change in the diff. You got 45 seconds for this task."},
                 {"role": "user", "content": prompt},
             ],
         )
