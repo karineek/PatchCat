@@ -272,6 +272,9 @@ def process() -> int:
         print(diff_text, flush=True)
         return 0
 
+    # Check we did not forget to add "ollama"
+    if "ollama" in args.ollama_api_base and not args.ollama_model.startswith("ollama/"):
+        args.ollama_model = f"ollama/{args.ollama_model}"
 
     # Load model + vectorizer after parsing, so paths can be overridden
     # Option 0 and anything else not below is the original PatchCat functionality
