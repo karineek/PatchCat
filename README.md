@@ -57,8 +57,7 @@ python3 PatchCat.py <diff-of-two-files>
 
 and to fully control each parameter of the deployment:
 ```
-ubuntu@fuzzing-05:~/gin/papar-2026/PatchCat/src$ python3 PatchCatGin.py \
->   --diff-text "diff --git a/foo.py b/foo.py
+ubuntu@fuzzing-05:~/gin/papar-2026/PatchCat/src$ python3 PatchCatGin.py --diff-text "diff --git a/foo.py b/foo.py
 > --- a/foo.py
 > +++ b/foo.py
 > @@ -1 +1 @@
