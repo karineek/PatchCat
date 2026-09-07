@@ -236,7 +236,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> int:
+def process() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
@@ -350,10 +350,18 @@ def main() -> int:
             vectorizer=vectorizer,
             clf=clf,
         )
-        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
-        print(diff_text, flush=True) # same
+        print(result, flush=True) # IF we are working with a multi-processor env./server/against a server, this is needed for sync.
+        # print(diff_text, flush=True) # same
         return 0
 
+def main() -> int:
+    try:
+        return process()
+
+    except Exception as e:
+        print("f[1] Cannot process due to error {e}", flush=True)
+        return 0
+        
 # Main
 if __name__ == "__main__":
     raise SystemExit(main())
