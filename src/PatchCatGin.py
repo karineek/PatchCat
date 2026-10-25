@@ -354,7 +354,7 @@ def process() -> int:
             clf=clf,
         )
         print(result, flush=True) # IF we are working with a multi-processor env./server/against a server, this is needed for sync.
-        # print(diff_text, flush=True) # same
+        print(diff_text, flush=True) # same
         return 0
 
 def main() -> int:
