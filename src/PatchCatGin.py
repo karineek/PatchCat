@@ -16,7 +16,7 @@ logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 ## Uncomment if you want to run with Ollama API
 # os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key; replace with yours; do not commit EVER the key.
 OLLAMA_API_KEY = os.environ["OLLAMA_API_KEY"]
-token_info="NONE OLLAMA RAN"
+token_info=""
 
 # a is from lines, and b is to lines
 import subprocess
@@ -64,7 +64,8 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
             2 = rubbish/trivial patch, e.g. comments-only, whitespace-only, dead code, noise
         If the LLM response cannot be parsed, it defaults to 1.
     """
-
+    global token_info
+	
     ## The prompt for this specific action:
     if (not direct): # When we use the summary, not the code
         prompt = f"Classify the following summary of code diff into exactly one category 0, 1, or 2:\n\n{record}"
@@ -106,7 +107,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
         )
         text = response["choices"][0]["message"]["content"].strip()
         usage = response["usage"]
-        token_info = (
+        token_info += (
             f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}\n"
             f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}\n"
             f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}"
@@ -132,6 +133,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
 
 def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> str:
     """Summarise the diff text using the local LLM."""
+    global token_info	
     prompt = f"Summarize in about {max_words} words:\n\n{record}"
     try:
         response = completion(
@@ -144,7 +146,7 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
             ],
         )
         usage = response["usage"]
-        token_info = (
+        token_info += (
             f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}\n"
             f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}\n"
             f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}"
