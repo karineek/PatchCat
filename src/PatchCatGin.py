@@ -140,6 +140,11 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
                 {"role": "user", "content": prompt},
             ],
         )
+        usage = response["usage"]
+        print(f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}")
+        print(f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}")
+        print(f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}")
+		
         return response["choices"][0]["message"]["content"].strip()
     except Exception as e:
         return f"[summary-error: {e}]"
