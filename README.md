@@ -57,6 +57,21 @@ python3 PatchCat.py <diff-of-two-files>
 
 and to fully control each parameter of the deployment:
 ```
+cd /opt/gin/PatchCat
+
+python3 PatchCatGin.py --diff-text "diff --git a/foo.py b/foo.py
+--- a/foo.py
++++ b/foo.py
+@@ -1 +1 @@
+-print('hi')
++print('hello')" \
+  --model-path "running-model/model.pkl" \
+  --vectorizer-path "running-model/vectorizer.pkl" \
+  --max-summary-words 15
+```
+
+That should get you this:
+```
 ubuntu@fuzzing-05:~/gin/papar-2026/PatchCat/src$ python3 PatchCatGin.py --diff-text "diff --git a/foo.py b/foo.py
 > --- a/foo.py
 > +++ b/foo.py
