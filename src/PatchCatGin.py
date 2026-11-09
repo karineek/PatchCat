@@ -1,17 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #!/usr/bin/env python3
 import sys
 import os
@@ -28,9 +14,8 @@ import logging
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
 ## Uncomment if you want to run with Ollama API
-#os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key, replace with your
-os.environ["OLLAMA_API_KEY"] = '9a7ca9df6a854a9488e1fc33af342573.U6hi7M8u2Z8xq44qpcnDzxyA'
-#'9e5678e8a2934650831856c9c1a7b921.T2WHAbf2MePOaeFwABh_tyoW'
+# os.environ["OLLAMA_API_KEY"] = "9990d84828sd4a484805609942baf97c-.VxGkNKkTIT3IdZUPDBy4vgi" # Not a valid key; replace with yours; do not commit EVER the key.
+OLLAMA_API_KEY = os.environ["OLLAMA_API_KEY"]
 
 # a is from lines, and b is to lines
 import subprocess
@@ -80,15 +65,15 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
     """
 
     ## The prompt for this specific action:
-    if (not direct): # When we use the summary not the code
+    if (not direct): # When we use the summary, not the code
         prompt = f"Classify the following summary of code diff into exactly one category 0, 1, or 2:\n\n{record}"
     elif direct < 0: # Negative is patch diff + summary
-        prompt = f"Classify the following code diff with its explaintion into exactly one category 0, 1, or 2:\n\n{record}"
+        prompt = f"Classify the following code diff with its explanation into exactly one category 0, 1, or 2:\n\n{record}"
     else: # Positive is patch diff only (direct use of LLMs)
         prompt = f"Classify the following code diff into exactly one category 0, 1, or 2:\n\n{record}"
     text = "No Response"
 
-    ## Exec the prompt:
+    ## Execute the prompt:
     #print(f"=== PatchCat running with: {model} via {api_base}")
     try:
         response = completion(
@@ -146,7 +131,7 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
             api_base=api_base,
             request_timeout=45,  # seconds
             messages=[
-                {"role": "system", "content": "You are Git Diff Analyser. You get output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. Never discuss comments unless they are the only change in the diff. You got 45 seconds for this task."},
+                {"role": "system", "content": "You are Git Diff Analyser. You get the output of diff of two files '<' (old) and '>' (new) with '---' separating between the codes. Output only the summary as plain text. Never discuss comments unless they are the only change in the diff. You got 45 seconds for this task."},
                 {"role": "user", "content": prompt},
             ],
         )
@@ -190,9 +175,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     #parser.add_argument("--ollama-model", default="ollama/llama3.2")
     #parser.add_argument("--ollama-api-base", default="http://localhost:11434")
-    # When using ollama API: either uncomment this or send these strings as paraments.
+    
+	# When using the Ollama API: either uncomment this or send these strings as parameters.
     parser.add_argument("--ollama-model", default="ollama/minimax-m3:cloud") # gpt-oss:20b-cloud")
     parser.add_argument("--ollama-api-base", default="https://ollama.com")
+
+	# The rest of the parameters
     parser.add_argument("--model-path", default=os.path.join("running-model", "model.pkl"))
     parser.add_argument("--vectorizer-path", default=os.path.join("running-model", "vectorizer.pkl"))
     parser.add_argument("--max-summary-words", type=int, default=15)
