@@ -259,7 +259,13 @@ def process() -> int:
             diff_text,
             model=args.ollama_model,
             api_base=args.ollama_api_base)
-        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #return 0
+        if (len(result) > 0):
+            print(result + token_info, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+            print(diff_text, flush=True) # same
+        else:
+            print(f"[1] Cannot process due to error {args.ollama_model} {result} result is null", flush=True)
         return 0
 
     elif args.options == 2: # Direct LLM, but LLM gets the summary of the patch
@@ -270,7 +276,13 @@ def process() -> int:
             max_words=args.max_summary_words,
             only_sum=1)
 
-        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #return 0
+        if (len(result) > 0):
+            print(result + token_info, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+            print(diff_text, flush=True) # same
+        else:
+            print(f"[1] Cannot process due to error {args.ollama_model} {result} result is null", flush=True)
         return 0
 
     elif args.options == 3: # Direct LLM, but LLM gets the summary of the patch with the patch diff too
@@ -281,7 +293,13 @@ def process() -> int:
             max_words=args.max_summary_words,
             only_sum=0)
 
-        print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+        #return 0
+        if (len(result) > 0):
+            print(result + token_info, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+            print(diff_text, flush=True) # same
+        else:
+            print(f"[1] Cannot process due to error {args.ollama_model} {result} result is null", flush=True)
         return 0
 
     else: # Original code
