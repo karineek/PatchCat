@@ -80,7 +80,7 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
             model=model,
             api_base=api_base,
             request_timeout=45,
-			think=THINK,
+			think=True,
             messages=[
                 {
                     "role": "system",
