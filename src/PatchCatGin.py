@@ -315,7 +315,7 @@ def process() -> int:
         if (len(result) > 0):
             print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
             print(diff_text, flush=True) # same
-			print(token_info, flush=True) # same
+            print(token_info, flush=True) # same
         else:
             print(f"[1] Cannot process due to error {args.ollama_model} {result} result is null", flush=True)
         return 0
