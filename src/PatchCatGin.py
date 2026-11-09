@@ -108,9 +108,9 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
         text = response["choices"][0]["message"]["content"].strip()
         usage = response["usage"]
         token_info += (
-            f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}\n"
-            f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}\n"
-            f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}"
+            f";[INFO] PatchCAT Input tokens: {usage['prompt_tokens']};"
+            f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']};"
+            f"[INFO] PatchCAT Total tokens: {usage['total_tokens']};"
         )
 
         ## Return the results:
@@ -147,9 +147,9 @@ def summarize_diff(record: str, model: str, api_base: str, max_words: int) -> st
         )
         usage = response["usage"]
         token_info += (
-            f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}\n"
-            f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}\n"
-            f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}"
+            f";[INFO] PatchCAT Input tokens: {usage['prompt_tokens']};"
+            f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']};"
+            f"[INFO] PatchCAT Total tokens: {usage['total_tokens']};"
         )
 
         return response["choices"][0]["message"]["content"].strip()
@@ -315,9 +315,8 @@ def process() -> int:
             return 0
 
         if (len(result) > 0):
-            print(result, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
+            print(result + token_info, flush=True) # IF we are working with a multi-processor env./server/against server, this is needed for sync.
             print(diff_text, flush=True) # same
-            print(token_info, flush=True) # same
         else:
             print(f"[1] Cannot process due to error {args.ollama_model} {result} result is null", flush=True)
         return 0
