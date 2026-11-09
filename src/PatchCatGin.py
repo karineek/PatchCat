@@ -105,9 +105,9 @@ def direct_diff_classification(record: str, model: str, api_base: str, direct=1)
         )
         text = response["choices"][0]["message"]["content"].strip()
         usage = response["usage"]
-        print(f"Input tokens: {usage['prompt_tokens']}")
-        print(f"Output tokens: {usage['completion_tokens']}")
-        print(f"Total tokens: {usage['total_tokens']}")
+        print(f"[INFO] PatchCAT Input tokens: {usage['prompt_tokens']}")
+        print(f"[INFO] PatchCAT Output tokens: {usage['completion_tokens']}")
+        print(f"[INFO] PatchCAT Total tokens: {usage['total_tokens']}")
 
         ## Return the results:
         # A's
