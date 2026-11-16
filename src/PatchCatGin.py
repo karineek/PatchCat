@@ -252,7 +252,7 @@ def process() -> int:
     if "ollama" in args.ollama_api_base and not args.ollama_model.startswith("ollama/"):
         args.ollama_model = f"ollama/{args.ollama_model}"
 		
-    token_info = "(INFO-PATCHCAT: " + args.ollama_model + ": " + args.ollama_api_base + ","
+    token_info += "(INFO-PATCHCAT: " + args.ollama_model + ": " + args.ollama_api_base + ","
 	
     # Load model + vectorizer after parsing, so paths can be overridden
     if args.options == 1: # Direct request from LLMs
